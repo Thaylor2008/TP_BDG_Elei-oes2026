@@ -1,8 +1,17 @@
 # TP_BDG_Eleicoes2026
+
 Análise Espacial de Dados de Segurança Pública (IPS Brasil) e Educação (IDEB) integrada ao Censo IBGE 2022 — Trabalho Prático Parte 1 (BDG/UFMG).
+
 # 📊 Trabalho Prático — Parte 1: Engenharia de Dados e Análise Exploratória
 **Disciplina:** Bancos de Dados Geográficos e Ciência de Dados Geoespaciais (ICEx - UFMG)  
 **Projeto:** Análise Espacial dos Dados Eleitorais de 2026
+
+---
+
+## 📝 Relatório e Edição Colaborativa
+* ✏️ **Link de Edição no Overleaf:** [Clique aqui para acessar o relatório no Overleaf](https://www.overleaf.com/project/6ab1a889055363a01b36ddc1/share#8ecf51ca0faa686010278c76ab4c6025a818ef164292c65f)
+
+> ⚠️ **Aviso ao Grupo:** Entrem no link acima para editar o relatório no Overleaf e adicionar o **seu nome completo e número de matrícula** na capa!
 
 ---
 
@@ -17,9 +26,9 @@ Este repositório contém a base de dados, scripts de engenharia de dados e o mo
   * `IPS Brasil - Tabela de Dados.csv` — Indicadores de Segurança Pessoal, Homicídios e IPS Municipal.
   * `divulgacao_anos_iniciais_municipios_2025/` — Notas do IDEB (Anos Iniciais do Ensino Fundamental).
   * `divulgacao_anos_finais_municipios_2025/` — Notas do IDEB (Anos Finais do Ensino Fundamental).
-  * `divulgacao_ensino_medio_municipios_2025/`— Notas do IDEB (Ensino Medio).
+  * `divulgacao_ensino_medio_municipios_2025/` — Notas do IDEB (Ensino Médio).
 * **`/relatorio/`**:
-  * `relatorio_parte1_template.tex` — Estrutura completa em LaTeX/ABNT para o Overleaf.
+  * `relatorio_parte1` — Estrutura completa em LaTeX/ABNT para o Overleaf.
 
 ---
 
