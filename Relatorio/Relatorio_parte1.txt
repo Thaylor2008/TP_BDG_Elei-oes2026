@@ -1,0 +1,135 @@
+\documentclass[12pt,a4paper]{article}
+
+% --- PACOTES FUNDAMENTAIS ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath, amssymb}
+\usepackage{indentfirst}
+\usepackage{microtype}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+% --- CONFIGURAÇÃO DE LINKS ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% --- CONFIGURAÇÃO DE PARÁGRAFOS ---
+\setlength{\parindent}{1.25cm}
+\setlength{\parskip}{0.2cm}
+
+\begin{document}
+
+% --- CAPA / CABEÇALHO ---
+\begin{center}
+    \textbf{\Large UNIVERSIDADE FEDERAL DE MINAS GERAIS}\\[0.2cm]
+    \textbf{\large Instituto de Ciências Exatas -- ICEx}\\[0.1cm]
+    \textbf{Bancos de Dados Geográficos e Ciência de Dados Geoespaciais}\\[1.5cm]
+    
+    {\Large \textbf{Trabalho Prático -- Parte 1: Engenharia de Dados e Análise Exploratória}}\\[0.3cm]
+    {\large Análise Espacial dos Dados Eleitorais de 2026}\\[2cm]
+    
+    \textbf{Integrantes do Grupo:}\\[0.5cm]
+    \begin{tabular}{ll}
+        \textbf{Nome:} Thaylor Weslei Dias G. Verteiro & \textbf{Matrícula:} 2023028668 \\
+        \textbf{Nome:} Nome do Aluno 2 & \textbf{Matrícula:} 202X000002 \\
+        \textbf{Nome:} Nome do Aluno 3 & \textbf{Matrícula:} 202X000003 \\
+        \textbf{Nome:} Nome do Aluno 4 & \textbf{Matrícula:} 202X000004 \\
+        \textbf{Nome:} Nome do Aluno 5 & \textbf{Matrícula:} 202X000005 \\
+        \textbf{Nome:} Nome do Aluno 6 & \textbf{Matrícula:} 202X000005 \\
+    \end{tabular}
+    
+    \vfill
+    
+    Belo Horizonte -- MG\\
+    \today
+\end{center}
+
+\newpage
+
+% --- SUMÁRIO ---
+\tableofcontents
+\newpage
+
+% --- CORPO DO RELATÓRIO ---
+
+\section{Introdução}
+\label{sec:introducao}
+Apresentação geral do trabalho, contexto da análise espacial para as eleições de 2026 e o objetivo da Parte 1 (Engenharia de Dados e Análise Exploratória de Dados).
+
+\section{Tema Complementar Municipal}
+\label{sec:tema_complementar}
+
+\subsection{Justificativa e Critérios de Escolha}
+Descreva o tema escolhido (ex: Saúde, Segurança Pública, Educação, Meio Ambiente) e a motivação para sua utilização na análise eleitoral municipal.
+
+\subsection{Fonte e Aquisição dos Dados}
+Indique a origem dos dados (ex: DATASUS, INEP, SNIS, IBGE), o nível de desagregação (municipal), a granularidade temporal e os arquivos baixados.
+
+\subsection{Processo de Carga no PostgreSQL/PostGIS}
+Explique os passos e comandos SQL/Python executados para importar a tabela temática complementar para o banco de dados espacial do projeto.
+
+\section{Dados de Referência e Censitários (IBGE 2022)}
+\label{sec:dados_censitarios}
+
+\subsection{Estruturação da Malha Territorial}
+Descreva a organização e filtragem das tabelas geográficas territoriais (Municípios, Regiões Imediatas, Regiões Intermediárias e Unidades da Federação).
+
+\subsection{Seleção de Atributos Socioeconômicos e Demográficos}
+Indique expressamente quais variáveis do Censo IBGE 2022 foram selecionadas (renda, faixa etária, escolaridade, sexo, cor/raça, etc.) e a justificativa de sua relevância para as análises espaciais.
+
+\subsection{Procedimentos de Agregação e Transformação}
+Detalhe as rotinas de agregação espacial e de dados calculadas para os diferentes níveis territoriais.
+
+\section{Análise Exploratória de Dados (EDA)}
+\label{sec:eda}
+
+\subsection{Qualidade da Base de Dados e Limpeza}
+Relatório sobre a identificação de valores faltantes (\textit{nulls}), inconsistências de nomes de colunas, padronização de códigos IBGE e correções aplicadas.
+
+\subsection{Estatísticas Descritivas Básicas}
+Apresentação das estatísticas descritivas (média, desvio-padrão, mediana, mínimos e máximos) das variáveis socioeconômicas e do tema complementar.
+
+% Exemplo de Tabela
+\begin{table}[H]
+    \centering
+    \caption{Resumo Estatístico das Principais Variáveis Selecionadas.}
+    \label{tab:estatisticas_resumo}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Variável} & \textbf{Média} & \textbf{Desvio-Padrão} & \textbf{Mínimo} & \textbf{Máximo} \\
+        \midrule
+        Renda Média (\textit{per capita}) & -- & -- & -- & -- \\
+        Taxa de Escolarização (\%) & -- & -- & -- & -- \\
+        Indicador Temático Add. & -- & -- & -- & -- \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Distribuição e Variabilidade das Variáveis}
+Análise da distribuição das variáveis e identificação de \textit{outliers} ou padrões atípicos.
+
+\section{Análise Crítica e Limitações da Base Preparada}
+\label{sec:analise_critica}
+
+\subsection{Potencial Analítico da Base}
+Discussão sobre o que o conjunto integrado de dados (Censo 2022 + Tema Complementar + Malha Territorial) permitirá analisar na etapa eleitoral (Parte 2).
+
+\subsection{Limitações Identificadas}
+Identificação explícita das limitações metodológicas, lacunas de dados ou possíveis vieses da base preparada.
+
+\section{Conclusão e Próximos Passos}
+\label{sec:conclusao}
+Síntese dos resultados obtidos na Parte 1 e preparação para a integração com os dados eleitorais de 2026 na Parte 2.
+
+\end{document}
