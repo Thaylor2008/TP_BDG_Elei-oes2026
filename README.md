@@ -17,6 +17,7 @@ Este repositório contém a base de dados, scripts de engenharia de dados e o mo
   * `IPS Brasil - Tabela de Dados.csv` — Indicadores de Segurança Pessoal, Homicídios e IPS Municipal.
   * `divulgacao_anos_iniciais_municipios_2025/` — Notas do IDEB (Anos Iniciais do Ensino Fundamental).
   * `divulgacao_anos_finais_municipios_2025/` — Notas do IDEB (Anos Finais do Ensino Fundamental).
+  * `divulgacao_ensino_medio_municipios_2025/`— Notas do IDEB (Ensino Medio).
 * **`/relatorio/`**:
   * `relatorio_parte1_template.tex` — Estrutura completa em LaTeX/ABNT para o Overleaf.
 
