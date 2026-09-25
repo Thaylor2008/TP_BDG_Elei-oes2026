@@ -15,6 +15,34 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% --- CONFIGURAÇÃO DE CÓDIGO (LISTINGS) ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
 
 % --- CONFIGURAÇÃO DE LINKS ---
 \hypersetup{
@@ -34,21 +62,28 @@
 \begin{center}
     \textbf{\Large UNIVERSIDADE FEDERAL DE MINAS GERAIS}\\[0.2cm]
     \textbf{\large Instituto de Ciências Exatas -- ICEx}\\[0.1cm]
-    \textbf{Bancos de Dados Geográficos e Ciência de Dados Geoespaciais}\\[1.5cm]
+    \textbf{Departamento de Ciência da Computação}\\[0.1cm]
+    \textbf{Bancos de Dados Geográficos e Ciência de Dados Geoespaciais (2026/2)}\\[0.1cm]
+    \textbf{Professor: Clodoveu Davis}\\[1.2cm]
     
     {\Large \textbf{Trabalho Prático -- Parte 1: Engenharia de Dados e Análise Exploratória}}\\[0.3cm]
-    {\large Análise Espacial dos Dados Eleitorais de 2026}\\[2cm]
+    {\large Análise Espacial Integrada de Segurança Pública (IPS Brasil) e Desempenho Educacional (IDEB/INEP) nos Municípios Brasileiros}\\[1.5cm]
     
-    \textbf{Integrantes do Grupo:}\\[0.5cm]
+    \textbf{Integrantes do Grupo:}\\[0.4cm]
     \begin{tabular}{ll}
-        \textbf{Nome:} Thaylor Weslei Dias G. Verteiro & \textbf{Matrícula:} 2023028668 \\
-        \textbf{Nome:} Nome do Aluno 2 & \textbf{Matrícula:} 202X000002 \\
-        \textbf{Nome:} Nome do Aluno 3 & \textbf{Matrícula:} 202X000003 \\
-        \textbf{Nome:} Nome do Aluno 4 & \textbf{Matrícula:} 202X000004 \\
-        \textbf{Nome:} Nome do Aluno 5 & \textbf{Matrícula:} 202X000005 \\
-        \textbf{Nome:} Nome do Aluno 6 & \textbf{Matrícula:} 202X000005 \\
+        \textbf{Integrantes do Grupo:}\\[0.4cm]
+    \begin{tabular}{ll}
+        \textbf{Nome:} Bruno Soares e Silva \\
+        \textbf{Nome:} Bernardo Alves Miranda \\
+        \textbf{Nome:} Camila Nicola Dias Santana \\
+        \textbf{Nome:} Igor Novais Barroso \\
+        \textbf{Nome:} Lucas Albuquerque Santos Costa \\
+        \textbf{Nome:} Thaylor Weslei Dias Godinho Verteiro \\
     \end{tabular}
-    
+    \end{tabular}
+    \\
+    \vspace{0.8cm}
+     \textbf{Repositório do GitHub:} \url{https://github.com/Thaylor2008/TP_BDG_Elei-oes2026.git}
     \vfill
     
     Belo Horizonte -- MG\\
@@ -65,71 +100,209 @@
 
 \section{Introdução}
 \label{sec:introducao}
-Apresentação geral do trabalho, contexto da análise espacial para as eleições de 2026 e o objetivo da Parte 1 (Engenharia de Dados e Análise Exploratória de Dados).
 
-\section{Tema Complementar Municipal}
+O estudo espacial de fenômenos políticos e sociais exige a construção de bases de dados geoespaciais (BDG) robustas, integradas e padronizadas. No contexto das Eleições de 2026, compreender o comportamento do eleitorado brasileiro requer transcender a mera contagem de votos e analisar as condicionantes socioeconômicas, estruturais e de qualidade de vida que influenciam as dinâmicas locais em nível municipal.
+
+Este relatório apresenta os resultados da \textbf{Parte 1 do Trabalho Prático da disciplina de Bancos de Dados Geográficos e Ciência de Dados Geoespaciais (DCC/UFMG)}. O objetivo principal desta primeira etapa consiste no desenvolvimento de um pipeline completo de Engenharia de Dados e Análise Exploratória de Dados (EDA). A rotina engloba a aquisição, filtragem, limpeza, normalização textual, pareamento de chaves espaciais heterogêneas, carga estruturada no servidor PostgreSQL 17.5 / PostGIS 3.5.2 e caracterização estatística e geográfica dos indicadores integrados.
+
+O tema complementar selecionado pelo grupo une dois pilares fundamentais do debate político nacional: \textbf{Segurança Pública} (mensurada via Índice de Progresso Social -- IPS Brasil 2026) e \textbf{Desempenho Educacional} (mensurado via Índice de Desenvolvimento da Educação Básica -- IDEB/INEP e dados do ENEM). A base unificada abrange os $5.570$ municípios do território brasileiro, servindo de alicerce para as análises de autocorrelação espacial (I de Moran) e correlação eleitoral que serão executadas na Parte 2 do projeto após o término da apuração do primeiro turno das Eleições de 2026.
+
+\section{Tema Complementar Municipal: Segurança Pública x Educação}
 \label{sec:tema_complementar}
 
 \subsection{Justificativa e Critérios de Escolha}
-Descreva o tema escolhido (ex: Saúde, Segurança Pública, Educação, Meio Ambiente) e a motivação para sua utilização na análise eleitoral municipal.
+
+A escolha integrada dos temas de \textbf{Segurança Pública} e \textbf{Educação} fundamenta-se na hipótese de que a vulnerabilidade social e a violência urbana exercem impacto direto sobre o ambiente escolar e a fixação de capital humano, constituindo eixos centrais nas plataformas de campanha eleitoral. Municípios com elevadas taxas de homicídios e violência comunitária frequentemente enfrentam maiores taxas de evasão escolar e pior desempenho em exames nacionais. Por outro lado, a oferta de educação pública de qualidade atua como fator estrutural de prevenção à criminalidade.
+
+Ao integrar os dados do \textbf{IPS Brasil 2026} (que detalha homicídios, assassinatos de jovens e mulheres, mortes no trânsito e violência doméstica) com os indicadores do \textbf{IDEB} (Anos Iniciais, Anos Finais e Ensino Médio da rede pública) e a Nota Mediana do ENEM, o grupo estruturou uma base com alto valor analítico para avaliar a efetividade de políticas públicas e suas intersecções com a preferência do eleitorado nas urnas.
 
 \subsection{Fonte e Aquisição dos Dados}
-Indique a origem dos dados (ex: DATASUS, INEP, SNIS, IBGE), o nível de desagregação (municipal), a granularidade temporal e os arquivos baixados.
+
+Os dados temáticos foram coletados de fontes oficiais e institucionais abertas de alta credibilidade:
+\begin{enumerate}
+    \item \textbf{IPS Brasil 2026 (\texttt{IPS Brasil 2026 - Tabela de Dados\_Brasil.csv}):} Mantido pelo Instituto Homem e Meio Ambiente da Amazônia (Imazon) e parceiros. Fornece o Índice de Progresso Social geral e subíndices de Segurança Pessoal, Violência contra Mulheres, Jovens, Negros e Indígenas, bem como a Nota Mediana do ENEM por município.
+    \item \textbf{IDEB / INEP (\texttt{divulgacao\_anos\_iniciais\_...xlsx}, \texttt{...anos\_finais...}, \texttt{\\...ensino\_medio...}):} Microdados oficiais do Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira referente às avaliações do SAEB e fluxo escolar para as redes públicas (estadual e municipal), utilizando dados de 2023/2025.
+\end{enumerate}
+
+\subsection{Processo de Engenharia de Dados (ETL) e Pareamento de Chaves}
+
+Um dos maiores desafios de Engenharia de Dados nesta etapa decorreu do fato de a tabela do IPS Brasil não disponibilizar o código IBGE oficial do município (\texttt{cd\_mun}), identificando as localidades apenas pelas colunas \texttt{Município} e \texttt{UF}. Para solucionar essa divergência e integrar a base ao IDEB (que já utiliza o \texttt{CO\_MUNICIPIO} do IBGE), desenvolveu-se um algoritmo de pareamento em Python em três passadas sucessivas:
+
+\begin{itemize}
+    \item \textbf{Passada 1 (Normalização Estrita):} Aplicação de limpeza de caracteres via codificação ASCII (\texttt{NFKD}), remoção de acentos, pontuações e conversão para caixa alta. Criação da chave \texttt{NOME\_NORMALIZADO/UF} para pareamento com a tabela de referência oficial \texttt{geodata.munic}.
+    \item \textbf{Passada 2 (Normalização Semântica / *Loose Match*):} Remoção de preposições e artigos genéricos (\texttt{DE}, \texttt{DO}, \texttt{DA}, \texttt{DOS}, \texttt{DAS}, \texttt{D'}). Essa etapa corrigiu nomes com variações ortográficas de conectivos.
+    \item \textbf{Passada 3 (Dicionário de Exceções Manuais):} Mapeamento direto de divergências históricas ou grafias arcaicas em municípios específicos, tais como: \texttt{GRACHO CARDOSO/SE} $\rightarrow$ \texttt{2802601} (oficial: *Graccho Cardoso*); \texttt{ARES/RN} $\rightarrow$ \texttt{2401206} (oficial: *Arez*); \texttt{ACU/RN} $\rightarrow$ \texttt{2400208} (oficial: *Assu*); \texttt{SAO LUIZ/RR} $\rightarrow$ \texttt{1400605} (oficial: *São Luiz do Anauá*).
+\end{itemize}
+
+O Listing~\ref{lst:etl_python} apresenta o trecho do código Python desenvolvido para a execução dessa rotina de tratamento e consolidação.
+
+\begin{lstlisting}[language=Python, caption={Código Python para limpeza, normalização e pareamento do IPS Brasil com o IDEB.}, label={lst:etl_python}]
+import re, unicodedata, pandas as pd
+
+def normaliza(txt: str) -> str:
+    if pd.isna(txt): return ""
+    txt = str(txt).strip().upper()
+    txt = unicodedata.normalize("NFKD", txt).encode("ascii", "ignore").decode("ascii")
+    txt = re.sub(r"[^A-Z0-9 ]", " ", txt)
+    return re.sub(r"\s+", " ", txt).strip()
+
+# Pareamento em 3 passadas: estrita, loose (sem preposicoes) e correcoes manuais
+ref = pd.read_csv("Dados brutos/ref/munic_ref.csv", dtype={"cd_mun": str})
+ref = ref[~ref["cd_mun"].isin(["4300001", "4300002"])].copy() # Exclui lagoas RS
+ref["chave"] = ref["nm_mun"].map(normaliza) + "/" + ref["sigla_uf"].str.upper()
+ref_map = ref.set_index("chave")["cd_mun"].to_dict()
+
+ips = pd.read_csv("Dados brutos/IPS Brasil 2026 - Tabela de Dados_Brasil.csv", encoding="utf-8-sig")
+ips["chave"] = ips["Município"].map(normaliza) + "/" + ips["UF"].str.upper()
+ips["cd_mun"] = ips["chave"].map(ref_map)
+\end{lstlisting}
 
 \subsection{Processo de Carga no PostgreSQL/PostGIS}
-Explique os passos e comandos SQL/Python executados para importar a tabela temática complementar para o banco de dados espacial do projeto.
+
+A tabela consolidada final (\texttt{grupo\_seguranca\_educacao.csv}), contendo $5.570$ municípios e $34$ atributos, foi importada para o servidor PostGIS da disciplina (\texttt{150.164.2.42:5432}, banco \texttt{bdg2026}, schema \texttt{geodata}) sob a tabela \texttt{geodata.thaylor\_verteiro\_seguranca\_educacao}.
+
+Para evitar erros de inserção por tipos de dados (como estouro de limite de inteiros devido a valores ausentes convertidos para *float* pelo *pandas*), o script de carga tratou explicitamente cada valor para tipos nativos do Python antes da execução do \texttt{psycopg2.extras.execute\_values}. O Listing~\ref{lst:upload_sql} exemplifica a estrutura DDL e o procedimento de inserção.
+
+\begin{lstlisting}[language=Python, caption={Script de criação da DDL e carga no servidor PostgreSQL/PostGIS.}, label={lst:upload_sql}]
+import psycopg2, pandas as pd
+from psycopg2.extras import execute_values
+
+CONN = dict(host="150.164.2.42", port=5432, dbname="bdg2026", user="turma2026", password="turma")
+TABELA = "thaylor_verteiro_seguranca_educacao"
+
+ddl = f"""
+DROP TABLE IF EXISTS geodata.{TABELA};
+CREATE TABLE geodata.{TABELA} (
+    cd_mun varchar(7) PRIMARY KEY,
+    nm_mun varchar(120), sigla_uf varchar(2), cd_rgi varchar(10), cd_rgint varchar(10),
+    area_km2 double precision, cd_tse integer, populacao_2025 double precision,
+    pib_per_capita double precision, ips_geral double precision,
+    ips_seguranca_pessoal double precision, ips_homicidios double precision,
+    ips_violencia_mulheres double precision, ips_nota_mediana_enem double precision,
+    ideb_anos_iniciais double precision, ideb_anos_finais double precision, ideb_ensino_medio double precision
+);
+"""
+\end{lstlisting}
 
 \section{Dados de Referência e Censitários (IBGE 2022)}
 \label{sec:dados_censitarios}
 
 \subsection{Estruturação da Malha Territorial}
-Descreva a organização e filtragem das tabelas geográficas territoriais (Municípios, Regiões Imediatas, Regiões Intermediárias e Unidades da Federação).
+
+A malha espacial de referência é mantida na tabela \texttt{geodata.munic} do banco da disciplina. Para garantir a integridade das análises espaciais, foram aplicados os filtros de tratamento previstos na especificação do projeto:
+
+\begin{enumerate}
+    \item \textbf{Exclusão de Polígonos Hidrográficos:} Remoção dos códigos \texttt{4300001} (Lagoa Mirim) e \texttt{4300002} (Lagoa dos Patos), localizados no Rio Grande do Sul. Embora façam parte da malha digital do IBGE, representam corpos d'água sem população ou administração municipal.
+    \item \textbf{Tratamento de Novos Municípios:} Observação referente ao município de \textbf{Boa Esperança do Norte (MT)} (código \texttt{5101837}), instalado em 01/01/2025 após decisão do STF. Por não possuir dados censitários no Censo 2022, foi mantido isolado para evitar distorções de agregação.
+\end{enumerate}
 
 \subsection{Seleção de Atributos Socioeconômicos e Demográficos}
-Indique expressamente quais variáveis do Censo IBGE 2022 foram selecionadas (renda, faixa etária, escolaridade, sexo, cor/raça, etc.) e a justificativa de sua relevância para as análises espaciais.
 
-\subsection{Procedimentos de Agregação e Transformação}
-Detalhe as rotinas de agregação espacial e de dados calculadas para os diferentes níveis territoriais.
+A base de dados de referência foi enriquecida com atributos estruturais do Censo Demográfico 2022 do IBGE:
+\begin{itemize}
+    \item \textbf{Demografia e População:} População projetada (\texttt{populacao\_2025}), área territorial (\texttt{area\_km2}) e densidade demográfica.
+    \item \textbf{Economia:} PIB *per capita* (\texttt{pib\_per\_capita}), essencial para controlar o efeito da riqueza municipal sobre os indicadores de saúde, educação e criminalidade.
+    \item \textbf{Níveis Geográficos de Agregação:} Chaves de ligação para Regiões Geográficas Imediatas (\texttt{cd\_rgi}), Regiões Geográficas Intermediárias (\texttt{cd\_rgint}) e Unidades da Federação (\texttt{sigla\_uf}), permitindo re-agregações na Parte 2.
+\end{itemize}
+
+\subsection{Procedimentos de Agregação e Integração Espacial}
+
+A tabela temática complementar \texttt{geodata.thaylor\_verteiro\_seguranca\_educacao} relaciona-se de forma $1:1$ com a tabela espacial \texttt{geodata.munic} através da chave primária \texttt{cd\_mun} (Código IBGE de 7 dígitos). A consulta SQL abaixo ilustra como é realizada a junção geográfica para visualização e análise no QGIS:
+
+\begin{lstlisting}[language=SQL, caption={Consulta SQL de junção entre a tabela temática e a malha espacial no PostGIS.}]
+SELECT 
+    m.cd_mun, m.nm_mun, m.sigla_uf, 
+    t.ips_homicidios, t.ips_nota_mediana_enem, t.ideb_ensino_medio,
+    m.geom
+FROM geodata.munic m
+JOIN geodata.thaylor_verteiro_seguranca_educacao t ON m.cd_mun = t.cd_mun;
+\end{lstlisting}
 
 \section{Análise Exploratória de Dados (EDA)}
 \label{sec:eda}
 
 \subsection{Qualidade da Base de Dados e Limpeza}
-Relatório sobre a identificação de valores faltantes (\textit{nulls}), inconsistências de nomes de colunas, padronização de códigos IBGE e correções aplicadas.
+
+A rotina de ETL obteve uma taxa de sucesso de \textbf{100\% de pareamento para a base do IPS Brasil} (todos os $5.570$ municípios pareados). Quanto ao IDEB/INEP, a cobertura é superior a $99\%$, registrando-se $53$ valores nulos nos Anos Iniciais ($0,95\%$), $27$ nos Anos Finais ($0,48\%$) e $52$ no Ensino Médio ($0,93\%$). Tais ausências são justificadas por municípios de pequeno porte sem rede municipal/estadual ofertante própria ou que não atingiram a taxa mínima de participação na prova do SAEB.
 
 \subsection{Estatísticas Descritivas Básicas}
-Apresentação das estatísticas descritivas (média, desvio-padrão, mediana, mínimos e máximos) das variáveis socioeconômicas e do tema complementar.
 
-% Exemplo de Tabela
+A Tabela~\ref{tab:estatisticas_eda_completas} apresenta o resumo das estatísticas descritivas calculadas para as principais variáveis socioeconômicas, educacionais e de segurança pública do banco unificado.
+
 \begin{table}[H]
-    \centering
-    \caption{Resumo Estatístico das Principais Variáveis Selecionadas.}
-    \label{tab:estatisticas_resumo}
-    \begin{tabular}{lcccc}
-        \toprule
-        \textbf{Variável} & \textbf{Média} & \textbf{Desvio-Padrão} & \textbf{Mínimo} & \textbf{Máximo} \\
-        \midrule
-        Renda Média (\textit{per capita}) & -- & -- & -- & -- \\
-        Taxa de Escolarização (\%) & -- & -- & -- & -- \\
-        Indicador Temático Add. & -- & -- & -- & -- \\
-        \bottomrule
-    \end{tabular}
+\centering
+\caption{Estatísticas descritivas das variáveis do banco de dados unificado ($N = 5.570$ municípios).}
+\label{tab:estatisticas_eda_completas}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccccc}
+\toprule
+\textbf{Variável} & \textbf{Válidos} & \textbf{Faltantes (\%)} & \textbf{Média} & \textbf{Desv. Padrão} & \textbf{Mínimo} & \textbf{Mediana} & \textbf{Máximo} \\ \midrule
+População (2025) & 5.570 & 0,00\% & 38.315,11 & 217.438,60 & 856,00 & 11.358,50 & 11.904.961,00 \\
+PIB per capita (R\$) & 5.570 & 0,00\% & 39.026,01 & 38.854,28 & 6.771,94 & 29.107,21 & 678.813,83 \\
+IPS Geral & 5.570 & 0,00\% & 60,44 & 4,38 & 42,44 & 60,53 & 73,10 \\
+IPS Segurança Pessoal & 5.570 & 0,00\% & 63,77 & 14,95 & 10,65 & 66,99 & 85,22 \\
+Taxa de Homicídios & 5.570 & 0,00\% & 17,50 & 16,03 & 0,00 & 13,14 & 220,27 \\
+Assassinatos de Jovens & 5.570 & 0,00\% & 32,70 & 38,70 & 0,00 & 20,96 & 552,98 \\
+Violência c/ Mulheres & 5.570 & 0,00\% & 200,16 & 230,89 & 0,00 & 127,28 & 2.525,71 \\
+Evasão Ensino Médio (\%) & 5.570 & 0,00\% & 8,72 & 3,23 & 1,27 & 8,30 & 24,46 \\
+Nota Mediana ENEM & 5.570 & 0,00\% & 511,41 & 34,25 & 405,95 & 508,93 & 652,96 \\
+IDEB Anos Iniciais & 5.517 & 0,95\% & 6,22 & 0,87 & 3,30 & 6,20 & 10,00 \\
+IDEB Anos Finais & 5.543 & 0,48\% & 5,11 & 0,74 & 2,80 & 5,10 & 9,30 \\
+IDEB Ensino Médio & 5.518 & 0,93\% & 4,47 & 0,58 & 2,40 & 4,50 & 7,20 \\ \bottomrule
+\end{tabular}%
+}
 \end{table}
 
-\subsection{Distribuição e Variabilidade das Variáveis}
-Análise da distribuição das variáveis e identificação de \textit{outliers} ou padrões atípicos.
+\subsection{Distribuição Espacial e Variabilidade}
+
+A análise espacial dos indicadores revela forte heterogeneidade territorial no Brasil:
+
+\begin{enumerate}
+    \item \textbf{Segurança Pública e Homicídios:} A taxa média de homicídios é de $17,50$ por 100 mil habitantes, apresentando extrema assimetria à direita. Vários municípios de pequeno porte registram taxa zero ($0,00$), enquanto polos regionais e certas faixas litorâneas do Norte e Nordeste atingem picos superiores a $100$ homicídios por 100 mil hab. (máximo de $220,27$). A Figura~\ref{fig:mapa_homicidios} ilustra a distribuição cartográfica das taxas de homicídios.
+    \item \textbf{Desempenho no ENEM e IDEB:} A Nota Mediana do ENEM apresenta média de $511,41$ pontos, com distribuição concentrada nas regiões Sul e Sudeste (picos de $652,96$ pontos), enquanto regiões do interior do Norte/Nordeste registram médias inferiores a $450$ pontos. A Figura~\ref{fig:mapa_enem} evidencia a distribuição espacial da nota do ENEM no território nacional.
+    \item \textbf{Gargalo do Ensino Médio:} Observa-se uma redução progressiva nas notas médias do IDEB à medida que se avança no ciclo escolar: Anos Iniciais ($6,22$), Anos Finais ($5,11$) e Ensino Médio ($4,47$). A taxa de evasão no Ensino Médio possui média de $8,72\%$, chegando a $24,46\%$ em municípios em situação de alta vulnerabilidade.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Mapa - Homicídios.png}
+\caption{Distribuição espacial da Taxa de Homicídios por 100 mil habitantes nos municípios brasileiros (Fonte: IPS Brasil 2026 / Elaboração do Grupo).}
+\label{fig:mapa_homicidios}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Mapa - Mediana ENEM.png}
+\caption{Distribuição espacial da Nota Mediana do ENEM nos municípios brasileiros (Fonte: IPS Brasil 2026 / Elaboração do Grupo).}
+\label{fig:mapa_enem}
+\end{figure}
 
 \section{Análise Crítica e Limitações da Base Preparada}
 \label{sec:analise_critica}
 
 \subsection{Potencial Analítico da Base}
-Discussão sobre o que o conjunto integrado de dados (Censo 2022 + Tema Complementar + Malha Territorial) permitirá analisar na etapa eleitoral (Parte 2).
+
+A base construída integra indicadores de vulnerabilidade social, desempenho educacional, economia e estrutura demográfica. Esse arranjo proporcionará na Parte 2 do trabalho um alto poder de explicação para:
+\begin{itemize}
+    \item Avaliar se a preferência por determinados candidatos/partidos nas Eleições de 2026 possui autocorrelação espacial com áreas de alta criminalidade ou baixo desempenho educacional.
+    \item Executar análises de \textbf{I de Moran Bivariado} cruzando votação eleitoral com a taxa de homicídios e o IDEB.
+    \item Identificar *clusters* espaciais de alto-alto e baixo-baixo (mapas LISA) para orientação de políticas públicas regionais.
+\end{itemize}
 
 \subsection{Limitações Identificadas}
-Identificação explícita das limitações metodológicas, lacunas de dados ou possíveis vieses da base preparada.
+
+As principais limitações metodológicas identificadas no processo incluem:
+\begin{enumerate}
+    \item \textbf{Janelas Temporais Distintas:} Os dados do Censo referem-se a 2022, os dados do IPS a 2026 e os microdados do IDEB a 2023/2025. Embora representem a melhor informação disponível em nível municipal, pequenas defasagens devem ser ponderadas.
+    \item \textbf{Ausência de Dados em Exceções Espaciais:} Conforme pontuado nas especificações da disciplina, o município de Boa Esperança do Norte (MT) não possui dados censitários de 2022.
+    \item \textbf{Agregação Municipal:} Dados agregados por município podem ocultar disparidades intraurbanas acentuadas que ocorrem em grandes metrópoles (como São Paulo e Rio de Janeiro).
+\end{enumerate}
 
 \section{Conclusão e Próximos Passos}
 \label{sec:conclusao}
-Síntese dos resultados obtidos na Parte 1 e preparação para a integração com os dados eleitorais de 2026 na Parte 2.
+
+A Parte 1 do trabalho cumpriu com êxito todas as etapas de Engenharia de Dados e Análise Exploratória. O pipeline em Python garantiu $100\%$ de pareamento dos municípios, a tabela foi adequadamente estruturada e disponibilizada no servidor PostgreSQL/PostGIS da UFMG e o relatório em LaTeX sintetiza as propriedades estatísticas e territoriais da base.
+
+Para a \textbf{Parte 2}, o grupo aguardará a publicação oficial dos dados eleitorais pelo TSE após o primeiro turno das Eleições de 2026 para executar as rotinas de agregação espacial nos níveis de Região Imediata, Intermediária e Estado, bem como os testes formais de autocorrelação e correlação espacial.
 
 \end{document}
