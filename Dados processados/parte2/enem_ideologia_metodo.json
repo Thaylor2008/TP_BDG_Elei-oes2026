@@ -1,0 +1,35 @@
+{
+  "fonte_classificacao": "https://doi.org/10.1590/1807-0191202531120",
+  "referencia_classificacao": 2022,
+  "unidade": "municipio; mesmo peso para cada municipio",
+  "comparacao": "descritiva; sem teste de significancia",
+  "agrupamento": "centro-esquerda e categorias a esquerda -> Esquerda; centro-direita e categorias a direita -> Direita; centro -> Centro",
+  "escopos": {
+    "presidente_BR": {
+      "municipios": 5571,
+      "empates": 2,
+      "sem_enem": 1,
+      "sem_classificacao_por_partido": {},
+      "municipios_comparados": 5568,
+      "grupos": {
+        "Direita": 2906,
+        "Esquerda": 2663,
+        "Empate": 2
+      }
+    },
+    "deputado_federal_MG": {
+      "municipios": 853,
+      "empates": 0,
+      "sem_enem": 0,
+      "sem_classificacao_por_partido": {
+        "PRD": 18
+      },
+      "municipios_comparados": 835,
+      "grupos": {
+        "Direita": 735,
+        "Esquerda": 100,
+        "Sem classificação": 18
+      }
+    }
+  }
+}

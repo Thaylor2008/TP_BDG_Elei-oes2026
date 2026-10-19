@@ -1,0 +1,13 @@
+{
+  "permutacoes": 999,
+  "semente": 2026,
+  "medida_eleitoral": "percentual nominal + legenda",
+  "vizinhos": "Queen por ST_Touches nas geometrias originais do BDG; pesos por linha",
+  "ilhas": "excluidas apenas dos testes espaciais; mantidas nas tabelas e correlacoes comuns",
+  "p_valor": "bilateral, esda.significance.calculate_significance",
+  "fdr": "Benjamini-Hochberg por escopo/tipo/nivel ou escopo/tipo/indicador",
+  "moran_bivariado": "x = percentual eleitoral; lag espacial do indicador y; permuta y",
+  "linhas_moran": 3088,
+  "linhas_correlacoes": 6176,
+  "segundos": 173.15
+}

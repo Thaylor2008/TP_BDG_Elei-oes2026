@@ -1,0 +1,3 @@
+﻿escopo,n_esquerda,n_direita,mediana_esquerda,mediana_direita,diferenca_direita_menos_esquerda,tipo_comparacao
+presidente_BR,2663,2905,494.78,523.94,29.16,descritiva; sem inferencia causal ou teste de significancia
+deputado_federal_MG,100,735,511.13,525.62,14.49,descritiva; sem inferencia causal ou teste de significancia

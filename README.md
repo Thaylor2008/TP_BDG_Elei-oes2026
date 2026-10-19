@@ -9,7 +9,9 @@
 
 ## 📌 Status do Projeto
 - [x] **Parte 1: Engenharia de Dados e Análise Exploratória (EDA)** — **CONCLUÍDA E ENTREGUE** ✅
-- [ ] **Parte 2: Análise Espacial, Autocorrelação (I de Moran) e Dados Eleitorais 2026** — *Aguardando dados oficiais do TSE pós-primeiro turno* ⏳
+- [ ] **Parte 2: Análise Espacial e Dados Eleitorais 2026** — processamento completo disponível; seleção e discussão dos casos no relatório ainda pendentes.
+
+As instruções da Parte 2, os arquivos de resultados e a correspondência com o enunciado estão em [Relatorio/Parte2_Como_usar.md](Relatorio/Parte2_Como_usar.md). O escopo é presidente no Brasil e deputado federal em MG, no primeiro turno. Candidatos sem votos no escopo completo são excluídos; zeros municipais dos demais candidatos são preservados.
 
 ---
 

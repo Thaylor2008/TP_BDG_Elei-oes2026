@@ -1,0 +1,35 @@
+{
+  "obtido_em_utc": "2026-10-19T23:21:41.529918+00:00",
+  "tabelas": [
+    {
+      "tabela": "geodata.munic",
+      "objetos": 5571,
+      "pares_vizinhos": 16482
+    },
+    {
+      "tabela": "geodata.micro",
+      "objetos": 510,
+      "pares_vizinhos": 1413
+    },
+    {
+      "tabela": "geodata.meso",
+      "objetos": 133,
+      "pares_vizinhos": 336
+    },
+    {
+      "tabela": "geodata.estado",
+      "objetos": 27,
+      "pares_vizinhos": 50
+    },
+    {
+      "tabela": "geodata.sexo_fx_etaria_simplif",
+      "linhas": 5571,
+      "comentario": null
+    },
+    {
+      "tabela": "geodata.renda_trabalho",
+      "linhas": 5570,
+      "comentario": null
+    }
+  ]
+}

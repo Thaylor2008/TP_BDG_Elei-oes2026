@@ -1,0 +1,73 @@
+{
+  "escopos": {
+    "presidente_BR": {
+      "arquivo": "votacao_secao_2026_BR.zip",
+      "linhas_lidas": 3800511,
+      "linhas_escopo": 3800511,
+      "votos_escopo": 125275835,
+      "votos_exterior": 341766,
+      "votos_domesticos": 124934069,
+      "municipios": 5571,
+      "candidatos": 13,
+      "candidatos_excluidos_sem_votos": 1,
+      "partidos": 13,
+      "nao_pareados": 0,
+      "categorias": {
+        "brancos": 2294982,
+        "nominais": 118975029,
+        "nulos": 3664058
+      }
+    },
+    "deputado_federal_MG": {
+      "arquivo": "votacao_secao_2026_MG.zip",
+      "linhas_lidas": 5923656,
+      "linhas_escopo": 2227266,
+      "votos_escopo": 12627167,
+      "votos_exterior": 0,
+      "votos_domesticos": 12627167,
+      "municipios": 853,
+      "candidatos": 720,
+      "candidatos_excluidos_sem_votos": 36,
+      "partidos": 26,
+      "nao_pareados": 0,
+      "categorias": {
+        "brancos": 699059,
+        "legenda": 331538,
+        "nominais": 11142727,
+        "nulos": 453843
+      }
+    }
+  },
+  "denominador": "votos nominais + legenda; exclui codigos 95,96,97",
+  "zero": "municipio coberto e candidato sem registro de votos recebe zero",
+  "indicadores_faltantes": {
+    "ips_geral": 1,
+    "ips_seguranca_pessoal": 1,
+    "ips_homicidios": 1,
+    "ips_assassinatos_jovens": 1,
+    "ips_assassinatos_mulheres": 1,
+    "ips_mortes_transito": 1,
+    "ips_violencia_mulheres": 1,
+    "ips_violencia_negros": 1,
+    "ips_violencia_indigenas": 4079,
+    "ips_acesso_conhecimento_basico": 1,
+    "ips_acesso_educ_superior": 1,
+    "ips_abandono_fundamental": 1,
+    "ips_abandono_medio": 1,
+    "ips_distorcao_idade_serie_medio": 1,
+    "ips_evasao_medio": 1,
+    "ips_ideb_fundamental_ref": 1,
+    "ips_reprovacao_medio": 1,
+    "ips_nota_mediana_enem": 1,
+    "ips_empregados_ensino_superior": 1,
+    "ideb_anos_iniciais": 54,
+    "ideb_anos_iniciais_ano_ref": 4,
+    "ideb_anos_finais": 28,
+    "ideb_anos_finais_ano_ref": 3,
+    "ideb_ensino_medio": 53,
+    "ideb_ensino_medio_ano_ref": 9,
+    "censo2022_populacao": 1,
+    "censo2022_rendimento_medio": 1,
+    "censo2022_rendimento_mediano": 1
+  }
+}

@@ -1,0 +1,8 @@
+numpy==2.5.4
+pandas==3.0.6
+scipy==1.18.1
+geopandas==1.2.0
+matplotlib==3.11.2
+libpysal==4.15.0
+esda==2.10.0
+psycopg[binary]==3.3.6
