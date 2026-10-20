@@ -17,6 +17,7 @@
 \usepackage{float}
 \usepackage{listings}
 \usepackage{xcolor}
+\graphicspath{{./}{figuras_parte2/}}
 
 % --- CONFIGURAÇÃO DE CÓDIGO (LISTINGS) ---
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -111,7 +112,7 @@ Este relatório apresenta a documentação técnica consolidada do \textbf{Traba
 
 \subsection{Justificativa e Critérios de Escolha}
 
-A escolha integrada dos temas de \textbf{Segurança Pública} e \textbf{Educação} fundamenta-se na hipótese de que a vulnerabilidade social e a violência urbana exercem impacto direto sobre o ambiente escolar e a fixação de capital humano, constituindo eixos centrais nas plataformas de campanha eleitoral. Municípios com elevadas taxas de homicídios e violência comunitária frequentemente enfrentam maiores taxas de evasão escolar e pior desempenho em exames nacionais. Por outro lado, a oferta de educação pública de qualidade atua como fator estrutural de prevenção à criminalidade.
+A escolha integrada dos temas de \textbf{Segurança Pública} e \textbf{Educação} fundamenta-se na hipótese exploratória de que indicadores de violência e de desempenho educacional podem apresentar padrões territoriais relacionados. O desenho observacional do trabalho permite investigar associações, mas não identificar efeitos causais. Municípios com elevadas taxas de homicídios e violência comunitária podem apresentar condições educacionais distintas, mas essa relação depende de fatores econômicos, demográficos e institucionais. A relação inversa também é discutida na literatura, porém não pode ser estabelecida causalmente com os dados agregados e observacionais utilizados neste trabalho.
 
 Ao integrar os dados do \textbf{IPS Brasil 2026} (que detalha homicídios, assassinatos de jovens e mulheres, mortes no trânsito e violência doméstica) com os indicadores do \textbf{IDEB} (Anos Iniciais, Anos Finais e Ensino Médio da rede pública) e a Nota Mediana do ENEM, o grupo estruturou uma base com alto valor analítico para avaliar a efetividade de políticas públicas e suas intersecções com a preferência do eleitorado nas urnas.
 
@@ -135,7 +136,7 @@ Um dos maiores desafios de Engenharia de Dados nesta etapa decorreu do fato de a
 
 O Listing~\ref{lst:etl_python} apresenta o trecho do código Python desenvolvido para a execução dessa rotina de tratamento e consolidação.
 
-\begin{lstlisting}[language=Python, caption={Código Python para limpeza, normalização e pareamento do IPS Brasil com o IDEB.}, label={lst:etl_python}]
+\begin{lstlisting}[language=Python, caption={Codigo Python para limpeza, normalizacao e pareamento do IPS Brasil com o IDEB.}, label={lst:etl_python}]
 import re, unicodedata, pandas as pd
 
 def normaliza(txt: str) -> str:
@@ -152,7 +153,7 @@ ref["chave"] = ref["nm_mun"].map(normaliza) + "/" + ref["sigla_uf"].str.upper()
 ref_map = ref.set_index("chave")["cd_mun"].to_dict()
 
 ips = pd.read_csv("Dados brutos/IPS Brasil 2026 - Tabela de Dados_Brasil.csv", encoding="utf-8-sig")
-ips["chave"] = ips["Município"].map(normaliza) + "/" + ips["UF"].str.upper()
+ips["chave"] = ips["Munic\u00edpio"].map(normaliza) + "/" + ips["UF"].str.upper()
 ips["cd_mun"] = ips["chave"].map(ref_map)
 \end{lstlisting}
 
@@ -162,11 +163,20 @@ A tabela consolidada final (\texttt{grupo\_seguranca\_educacao.csv}), contendo $
 
 Para evitar erros de inserção por tipos de dados (como estouro de limite de inteiros devido a valores ausentes convertidos para *float* pelo *pandas*), o script de carga tratou explicitamente cada valor para tipos nativos do Python antes da execução do \texttt{psycopg2.extras.execute\_values}. O Listing~\ref{lst:upload_sql} exemplifica a estrutura DDL e o procedimento de inserção.
 
-\begin{lstlisting}[language=Python, caption={Script de criação da DDL e carga no servidor PostgreSQL/PostGIS.}, label={lst:upload_sql}]
+\begin{lstlisting}[language=Python, caption={Script de criacao da DDL e carga no servidor PostgreSQL/PostGIS.}, label={lst:upload_sql}]
+import os
 import psycopg2, pandas as pd
 from psycopg2.extras import execute_values
 
-CONN = dict(host="150.164.2.42", port=5432, dbname="bdg2026", user="turma2026", password="turma")
+# Configure os parametros de conexao por variaveis de ambiente.
+# Nao armazene senhas ou credenciais diretamente no relatorio/repositorio.
+CONN = {
+    "host": os.getenv("PGHOST"),
+    "port": int(os.getenv("PGPORT", "5432")),
+    "dbname": os.getenv("PGDATABASE"),
+    "user": os.getenv("PGUSER"),
+    "password": os.getenv("PGPASSWORD"),
+}
 TABELA = "thaylor_verteiro_seguranca_educacao"
 
 ddl = f"""
@@ -197,7 +207,7 @@ A malha espacial de referência é mantida na tabela \texttt{geodata.munic} do b
 
 \subsection{Seleção de Atributos Socioeconômicos e Demográficos}
 
-A base de dados de referência foi enriquecida com atributos estruturais do Censo Demográfico 2022 do IBGE:
+A base de dados de referência foi enriquecida com atributos estruturais do Censo Demográfico 2022 do IBGE e variáveis provenientes do IPS Brasil 2026. As origens são mantidas separadas para evitar atribuição incorreta:
 \begin{itemize}
     \item \textbf{Demografia e População:} População projetada (\texttt{populacao\_2025}), área territorial (\texttt{area\_km2}) e densidade demográfica.
     \item \textbf{Economia:} PIB *per capita* (\texttt{pib\_per\_capita}), essencial para controlar o efeito da riqueza municipal sobre os indicadores de saúde, educação e criminalidade.
@@ -208,7 +218,7 @@ A base de dados de referência foi enriquecida com atributos estruturais do Cens
 
 A tabela temática complementar \texttt{geodata.thaylor\_verteiro\_seguranca\_educacao} relaciona-se de forma $1:1$ com a tabela espacial \texttt{geodata.munic} através da chave primária \texttt{cd\_mun} (Código IBGE de 7 dígitos). A consulta SQL abaixo ilustra como é realizada a junção geográfica para visualização e análise no QGIS:
 
-\begin{lstlisting}[language=SQL, caption={Consulta SQL de junção entre a tabela temática e a malha espacial no PostGIS.}]
+\begin{lstlisting}[language=SQL, caption={Consulta SQL de juncao entre a tabela tematica e a malha espacial no PostGIS.}]
 SELECT 
     m.cd_mun, m.nm_mun, m.sigla_uf, 
     t.ips_homicidios, t.ips_nota_mediana_enem, t.ideb_ensino_medio,
@@ -222,7 +232,7 @@ JOIN geodata.thaylor_verteiro_seguranca_educacao t ON m.cd_mun = t.cd_mun;
 
 \subsection{Qualidade da Base de Dados e Limpeza}
 
-A rotina de ETL obteve uma taxa de sucesso de \textbf{100\% de pareamento para a base do IPS Brasil} (todos os $5.570$ municípios pareados). Quanto ao IDEB/INEP, a cobertura é superior a $99\%$, registrando-se $53$ valores nulos nos Anos Iniciais ($0,95\%$), $27$ nos Anos Finais ($0,48\%$) e $52$ no Ensino Médio ($0,93\%$). Tais ausências são justificadas por municípios de pequeno porte sem rede municipal/estadual ofertante própria ou que não atingiram a taxa mínima de participação na prova do SAEB.
+A rotina de ETL obteve uma taxa de sucesso de \textbf{100\% de pareamento para a base do IPS Brasil} (todos os $5.570$ municípios pareados). Quanto ao IDEB/INEP, a cobertura é superior a $99\%$, registrando-se $53$ valores nulos nos Anos Iniciais ($0,95\%$), $27$ nos Anos Finais ($0,48\%$) e $52$ no Ensino Médio ($0,93\%$). Essas ausências devem ser interpretadas como falta de valor publicado na base utilizada; não se assume uma causa única para todos os municípios. Os valores ausentes foram preservados, sem imputação e sem conversão para zero.
 
 \subsection{Estatísticas Descritivas Básicas}
 
@@ -294,7 +304,7 @@ As principais limitações metodológicas identificadas incluem:
 \section{Conclusão da Parte 1}
 \label{sec:conclusao_p1}
 
-A Parte 1 do trabalho cumpriu com êxito todas as etapas de Engenharia de Dados e Análise Exploratória, garantindo 100\% de pareamento dos municípios e disponibilizando a tabela estruturada no PostGIS.
+A Parte 1 consolidou uma base temática municipal e documentou o pareamento dos 5.570 registros do IPS utilizados no arquivo final. A cobertura dos indicadores do IDEB é elevada, mas não completa: há valores ausentes em cada etapa de ensino. A base resultante foi utilizada como entrada para as análises exploratórias da Parte 2.
 
 \newpage
 
@@ -307,18 +317,18 @@ A Parte 1 do trabalho cumpriu com êxito todas as etapas de Engenharia de Dados 
 
 \subsection{Metodologia, Matriz de Vizinhança e Correção FDR}
 
-A Parte 2 do trabalho processou os dados do 1º turno das Eleições de 2026 para $13$ candidatos à Presidência no Brasil e $720$ candidatos a Deputado Federal em Minas Gerais (após exclusão de 37 candidatos sem votos).
+A Parte 2 do trabalho processou os dados do 1º turno das Eleições de 2026 para $13$ candidatos à Presidência no Brasil e $720$ candidatos a Deputado Federal em Minas Gerais. Foram excluídos, no conjunto dos dois escopos, $37$ candidatos sem votos: um no escopo presidencial e 36 no escopo mineiro.
 
 As análises utilizaram:
 \begin{itemize}
     \item \textbf{Matriz de Contiguidade Espacial:} Critério Queen (\texttt{ST\_Touches}) baseado nos limites geográficos originais do IBGE.
     \item \textbf{Testes de Inferência Espacial:} Cálculo do I de Moran Global e Bivariado com $999$ permutações pseudo-aleatórias (semente 2026) e p-valor bilateral.
-    \item \textbf{Ajuste para Múltiplos Testes:} Correção de Benjamini--Hochberg (*False Discovery Rate* -- FDR) produzindo a métrica $q\_fdr\_bh$. Resultados com $q < 0,05$ foram considerados estatisticamente significantes.
+    \item \textbf{Ajuste para Múltiplos Testes:} Correção de Benjamini--Hochberg (*False Discovery Rate* -- FDR). Para Moran global, os testes são ajustados separadamente por escopo, tipo de entidade e nível territorial; nas correlações, por escopo, tipo de entidade e indicador. Os valores ajustados são registrados como $q\_fdr\_bh$; nos testes de Pearson e Spearman, também são mantidos os valores-$q$ específicos de cada método. Considerou-se evidência estatística quando $q < 0,05$.
 \end{itemize}
 
 \subsection{Autocorrelação Espacial dos Candidatos (Item 6a do Enunciado)}
 
-Testou-se a hipótese de que municípios vizinhos apresentam votações parecidas (organização espacial do voto).
+Testou-se a hipótese de que municípios vizinhos apresentam percentuais de votação parecidos. A evidência é avaliada pelo I de Moran Global e pelo valor $q$ ajustado; o índice descreve autocorrelação espacial, não uma preferência política individual.
 \begin{itemize}
     \item \textbf{Presidente no Brasil:} Houve evidência estatística de dependência espacial para \textbf{13 dos 13 candidatos presidenciais (100\%)}.
     \item \textbf{Deputado Federal em MG:} Registrou-se dependência espacial para \textbf{568 dos 720 candidatos (78,9\%)}. Destes, $567$ apresentaram autocorrelação positiva e apenas $1$ apresentou autocorrelação negativa.
@@ -333,14 +343,17 @@ Para avaliar o Efeito do Agrupamento de Unidades Modificáveis (*Modifiable Area
 \centering
 \caption{Quantidade de candidatos com evidência estatística de autocorrelação espacial ($q < 0,05$) por nível territorial.}
 \label{tab:comparacao_escalas}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Escopo} & \textbf{Municípios} & \textbf{Regiões Imediatas} & \textbf{Regiões Intermediárias} & \textbf{Estados} \\ \midrule
 Presidente no Brasil & 13 de 13 & 13 de 13 & 12 de 13 & -- \\
 Deputado Federal em MG & 568 de 720 & 258 de 720 & 0 de 720 & N/A* \\ \bottomrule
-\multicolumn{5}{l}{\small *Em MG existe apenas 1 UF, impossibilitando o teste espacial de vizinhança no nível estadual.}
-\end{tabular}
+
+\end{tabular}}
 \end{table}
+
+\noindent\small *Em MG existe apenas uma UF, impossibilitando o teste espacial de vizinhança no nível estadual.\normalsize
 
 As Figuras~\ref{fig:panorama_moran_br} e \ref{fig:panorama_moran_mg} apresentam a distribuição dos valores do I de Moran nos diferentes níveis territoriais para Brasil e Minas Gerais.
 
@@ -366,6 +379,7 @@ Cruzou-se a votação municipal dos $733$ candidatos com os indicadores de Segur
 \centering
 \caption{Quantidade de candidatos com associação estatisticamente significante ($q < 0,05$) por indicador e teste.}
 \label{tab:correlacoes_resumo}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lccc}
 \toprule
 \textbf{Indicador} & \textbf{Pearson (Linear)} & \textbf{Spearman (Monotônica)} & \textbf{Moran Bivariado (Espacial)} \\ \midrule
@@ -375,10 +389,16 @@ IDEB -- Anos Iniciais & 35 & 69 & 98 \\
 IDEB -- Anos Finais & 31 & 69 & 93 \\
 IDEB -- Ensino Médio & 32 & 126 & 112 \\
 PIB per capita & 83 & 587 & 186 \\
-Rendimento Médio (Censo) & -- & -- & 328 \\
-Densidade Demográfica & -- & -- & 124 \\ \bottomrule
-\end{tabular}
+Rendimento Médio (Censo 2022) & 212 & 655 & 328 \\
+Densidade Demográfica (Censo 2022) & 132 & 667 & 124 \\ \bottomrule
+\end{tabular}}
 \end{table}
+
+Os números da tabela são contagens de candidatos com evidência estatística após ajuste FDR, e não medidas da intensidade da relação. Em particular, a correlação de Spearman detectou associações para 527 candidatos com a taxa de homicídios e 650 com a nota mediana do ENEM; para rendimento médio censitário e densidade, foram 655 e 667, respectivamente. Isso não significa que as associações sejam fortes ou tenham todas a mesma direção.
+
+A inspeção dos coeficientes confirma que a direção varia conforme o candidato e o indicador. Entre as associações de Spearman significativas com homicídios, 508 foram positivas e 19 negativas; para ENEM, 633 foram positivas e 17 negativas. Esses totais descrevem apenas os resultados que passaram pelo limiar de significância, não uma relação universal entre voto e indicador. A mediana dos valores absolutos de Spearman nesses conjuntos foi aproximadamente $0,119$ para homicídios e $0,173$ para ENEM, sugerindo que a significância estatística não deve ser confundida com associação de grande magnitude.
+
+No Moran bivariado, o sinal também variou: entre os resultados significativos, a associação foi positiva em 73 casos e negativa em 74 para homicídios; para ENEM, foram 119 positivos e 84 negativos. Esse teste relaciona a votação municipal ao indicador observado nos municípios vizinhos, conforme a definição adotada no código, e não é equivalente à correlação simples entre duas variáveis no mesmo município. Como há muitos testes simultâneos, a correção FDR reduz, mas não elimina, a necessidade de interpretar os resultados com cautela.
 
 As Figuras~\ref{fig:indicadores_br} e \ref{fig:indicadores_mg} ilustram a distribuição espacial comparativa dos indicadores de Segurança e Educação.
 
@@ -436,13 +456,18 @@ A Tabela~\ref{tab:enem_ideologia} e as Figuras~\ref{fig:enem_ideologia_br} e \re
 \centering
 \caption{Comparação das notas medianas do ENEM entre municípios liderados por partidos de Esquerda e Direita.}
 \label{tab:enem_ideologia}
-\begin{tabular}{lcccc}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}
 \toprule
-\textbf{Escopo} & \textbf{Municípios Esquerda} & \textbf{Municípios Direita} & \textbf{Mediana Esquerda} & \textbf{Mediana Direita} \\ \midrule
-Presidente no Brasil & 2.663 & 2.905 & 494,78 & 523,94 (+29,16) \\
-Deputado Federal em MG & 100 & 735 & 511,13 & 525,62 (+14,49) \\ \bottomrule
-\end{tabular}
+\textbf{Escopo} & \textbf{Esquerda ($n$)} & \textbf{Direita ($n$)} & \textbf{Mediana E.} & \textbf{Mediana D.} & \textbf{Dif. D.--E.} \\ \midrule
+Presidente no Brasil & 2.663 & 2.905 & 494,78 & 523,94 & +29,16 \\
+Deputado Federal em MG & 100 & 735 & 511,13 & 525,62 & +14,49 \\ \bottomrule
+\end{tabular}}
 \end{table}
+
+No escopo presidencial, a comparação inclui 5.568 municípios com classificação esquerda/direita e nota disponível; dois empates e um município sem nota ficaram fora. Em Minas Gerais, 835 municípios foram comparados; 18 municípios cujo partido líder era o PRD ficaram sem classificação ideológica na referência utilizada. Portanto, os totais de esquerda e direita não representam todos os municípios de cada escopo.
+
+A mediana do grupo de direita foi maior nos dois recortes, com diferenças descritivas de 29,16 pontos no Brasil e 14,49 pontos em MG. Não foi aplicado teste de significância para essas diferenças, nem ajuste por renda, região, tamanho populacional ou dependência espacial. Além disso, a classificação partidária se baseia em avaliação de especialistas referente a 2022, aplicada exploratoriamente aos resultados de 2026. Assim, não se pode concluir que a orientação ideológica cause notas mais altas ou mais baixas, nem atribuir a nota municipal aos eleitores individualmente.
 
 \begin{figure}[H]
 \centering
@@ -465,12 +490,16 @@ Ressaltam-se os seguintes cuidados na interpretação dos achados:
 \begin{enumerate}
     \item \textbf{Falácia Ecológica:} Associações em nível municipal não implicam causalidade nem permitem inferir o comportamento individual de voto do eleitor.
     \item \textbf{Agregação Espacial e MAUP:} A redução do número de unidades espaciais em níveis agregados (RGI/RGINT) reduz o poder estatístico dos testes de contiguidade.
-    \item \textbf{Classificação Ideológica:} A classificação partidária utilizada reflete uma avaliação histórica de especialistas (2022) aplicada de forma exploratória aos dados de 2026.
+    \item \textbf{Classificação Ideológica:} A classificação partidária utilizada reflete uma avaliação de especialistas referente a 2022, aplicada de forma exploratória aos dados de 2026; 18 municípios mineiros liderados pelo PRD não entraram na comparação esquerda/direita por ausência de classificação na fonte.
+    \item \textbf{Dependência entre observações e testes múltiplos:} municípios vizinhos não são necessariamente independentes. Os testes convencionais de Pearson e Spearman não modelam explicitamente essa dependência; os resultados espaciais são apresentados separadamente.
+    \item \textbf{Definição do denominador eleitoral:} os percentuais de votação usam votos nominais mais votos de legenda, excluindo códigos de branco, nulo e anulado/apurado em separado. Essa definição operacional deve ser distinguida de uma certificação jurídica de votos válidos.
 \end{enumerate}
 
 \section{Conclusão Geral}
 \label{sec:conclusao_geral}
 
-O trabalho prático alcançou integralmente seus objetivos de Engenharia de Dados, Análise Exploratória e Econometria Espacial. Demonstrou-se a presença de forte organização territorial no voto brasileiro, influenciada pela escala geográfica e correlacionada a fatores estruturais de segurança pública e desempenho educacional.
+O trabalho integrou dados eleitorais, indicadores de segurança e educação, variáveis socioeconômicas e geometrias municipais em um fluxo reprodutível de preparação, análise e visualização. Os resultados apontam organização espacial do voto em muitos dos candidatos e partidos examinados, mas a quantidade de resultados significativos varia com a escala territorial e com o indicador. As correlações municipais mostram que há associações estatísticas para parte dos candidatos, sobretudo em análises monotônicas, mas sua direção e magnitude variam e não sustentam uma explicação única do comportamento eleitoral.
+
+A comparação entre ENEM e orientação ideológica do partido líder encontrou medianas municipais maiores no grupo classificado à direita nos dois escopos analisados. Como a comparação é descritiva, sem teste inferencial ou controles, o resultado não permite afirmar que a ideologia determine o desempenho educacional. Em conjunto, o estudo deve ser interpretado como uma análise exploratória de padrões territoriais, sujeita a diferenças temporais entre fontes, dados ausentes, escolhas de escala e falácia ecológica.
 
 \end{document}
