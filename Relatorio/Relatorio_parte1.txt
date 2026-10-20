@@ -66,12 +66,10 @@
     \textbf{Bancos de Dados Geográficos e Ciência de Dados Geoespaciais (2026/2)}\\[0.1cm]
     \textbf{Professor: Clodoveu Davis}\\[1.2cm]
     
-    {\Large \textbf{Trabalho Prático -- Parte 1: Engenharia de Dados e Análise Exploratória}}\\[0.3cm]
-    {\large Análise Espacial Integrada de Segurança Pública (IPS Brasil) e Desempenho Educacional (IDEB/INEP) nos Municípios Brasileiros}\\[1.5cm]
+    {\Large \textbf{Trabalho Prático -- Relatório Completo (Partes 1 e 2)}}\\[0.3cm]
+    {\large Análise Espacial Integrada de Segurança Pública (IPS Brasil), Desempenho Educacional (IDEB/ENEM) e Dados Eleitorais de 2026}\\[1.5cm]
     
     \textbf{Integrantes do Grupo:}\\[0.4cm]
-    \begin{tabular}{ll}
-        \textbf{Integrantes do Grupo:}\\[0.4cm]
     \begin{tabular}{ll}
         \textbf{Nome:} Bruno Soares e Silva \\
         \textbf{Nome:} Bernardo Alves Miranda \\
@@ -79,7 +77,6 @@
         \textbf{Nome:} Igor Novais Barroso \\
         \textbf{Nome:} Lucas Albuquerque Santos Costa \\
         \textbf{Nome:} Thaylor Weslei Dias Godinho Verteiro \\
-    \end{tabular}
     \end{tabular}
     \\
     \vspace{0.8cm}
@@ -103,9 +100,11 @@
 
 O estudo espacial de fenômenos políticos e sociais exige a construção de bases de dados geoespaciais (BDG) robustas, integradas e padronizadas. No contexto das Eleições de 2026, compreender o comportamento do eleitorado brasileiro requer transcender a mera contagem de votos e analisar as condicionantes socioeconômicas, estruturais e de qualidade de vida que influenciam as dinâmicas locais em nível municipal.
 
-Este relatório apresenta os resultados da \textbf{Parte 1 do Trabalho Prático da disciplina de Bancos de Dados Geográficos e Ciência de Dados Geoespaciais (DCC/UFMG)}. O objetivo principal desta primeira etapa consiste no desenvolvimento de um pipeline completo de Engenharia de Dados e Análise Exploratória de Dados (EDA). A rotina engloba a aquisição, filtragem, limpeza, normalização textual, pareamento de chaves espaciais heterogêneas, carga estruturada no servidor PostgreSQL 17.5 / PostGIS 3.5.2 e caracterização estatística e geográfica dos indicadores integrados.
-
-O tema complementar selecionado pelo grupo une dois pilares fundamentais do debate político nacional: \textbf{Segurança Pública} (mensurada via Índice de Progresso Social -- IPS Brasil 2026) e \textbf{Desempenho Educacional} (mensurado via Índice de Desenvolvimento da Educação Básica -- IDEB/INEP e dados do ENEM). A base unificada abrange os $5.570$ municípios do território brasileiro, servindo de alicerce para as análises de autocorrelação espacial (I de Moran) e correlação eleitoral que serão executadas na Parte 2 do projeto após o término da apuração do primeiro turno das Eleições de 2026.
+Este relatório apresenta a documentação técnica consolidada do \textbf{Trabalho Prático da disciplina de Bancos de Dados Geográficos e Ciência de Dados Geoespaciais (DCC/UFMG)}, integrando as duas fases do projeto:
+\begin{enumerate}
+    \item \textbf{Parte 1 (Engenharia de Dados e Análise Exploratória):} Aquisição, tratamento, normalização textual, pareamento de chaves espaciais heterogêneas, carga estruturada no servidor PostgreSQL 17.5 / PostGIS 3.5.2 e caracterização estatística das bases de Segurança Pública e Educação.
+    \item \textbf{Parte 2 (Análise Espacial Eleitoral de 2026):} Ingestão dos microdados de votação do 1º turno das Eleições de 2026 (Presidente no Brasil e Deputado Federal em Minas Gerais), agregação espacial em 4 níveis territoriais (Município, RGI, RGINT e Estado), cálculo da autocorrelação espacial (I de Moran Global e Bivariado com 999 permutações e correção FDR), avaliação de mudança de escala (efeito MAUP), análise de partidos, perfis socioeducacionais e cruzamento com orientação ideológica.
+\end{enumerate}
 
 \section{Tema Complementar Municipal: Segurança Pública x Educação}
 \label{sec:tema_complementar}
@@ -121,7 +120,7 @@ Ao integrar os dados do \textbf{IPS Brasil 2026} (que detalha homicídios, assas
 Os dados temáticos foram coletados de fontes oficiais e institucionais abertas de alta credibilidade:
 \begin{enumerate}
     \item \textbf{IPS Brasil 2026 (\texttt{IPS Brasil 2026 - Tabela de Dados\_Brasil.csv}):} Mantido pelo Instituto Homem e Meio Ambiente da Amazônia (Imazon) e parceiros. Fornece o Índice de Progresso Social geral e subíndices de Segurança Pessoal, Violência contra Mulheres, Jovens, Negros e Indígenas, bem como a Nota Mediana do ENEM por município.
-    \item \textbf{IDEB / INEP (\texttt{divulgacao\_anos\_iniciais\_...xlsx}, \texttt{...anos\_finais...}, \texttt{\\...ensino\_medio...}):} Microdados oficiais do Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira referente às avaliações do SAEB e fluxo escolar para as redes públicas (estadual e municipal), utilizando dados de 2023/2025.
+    \item \textbf{IDEB / INEP (\texttt{divulgacao\_anos\_iniciais\_...xlsx}, \texttt{...anos\_finais...}, \texttt{...ensino\_medio...}):} Microdados oficiais do Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira referente às avaliações do SAEB e fluxo escolar para as redes públicas (estadual e municipal), utilizando dados de 2023/2025.
 \end{enumerate}
 
 \subsection{Processo de Engenharia de Dados (ETL) e Pareamento de Chaves}
@@ -260,7 +259,6 @@ A análise espacial dos indicadores revela forte heterogeneidade territorial no 
 \begin{enumerate}
     \item \textbf{Segurança Pública e Homicídios:} A taxa média de homicídios é de $17,50$ por 100 mil habitantes, apresentando extrema assimetria à direita. Vários municípios de pequeno porte registram taxa zero ($0,00$), enquanto polos regionais e certas faixas litorâneas do Norte e Nordeste atingem picos superiores a $100$ homicídios por 100 mil hab. (máximo de $220,27$). A Figura~\ref{fig:mapa_homicidios} ilustra a distribuição cartográfica das taxas de homicídios.
     \item \textbf{Desempenho no ENEM e IDEB:} A Nota Mediana do ENEM apresenta média de $511,41$ pontos, com distribuição concentrada nas regiões Sul e Sudeste (picos de $652,96$ pontos), enquanto regiões do interior do Norte/Nordeste registram médias inferiores a $450$ pontos. A Figura~\ref{fig:mapa_enem} evidencia a distribuição espacial da nota do ENEM no território nacional.
-    \item \textbf{Gargalo do Ensino Médio:} Observa-se uma redução progressiva nas notas médias do IDEB à medida que se avança no ciclo escolar: Anos Iniciais ($6,22$), Anos Finais ($5,11$) e Ensino Médio ($4,47$). A taxa de evasão no Ensino Médio possui média de $8,72\%$, chegando a $24,46\%$ em municípios em situação de alta vulnerabilidade.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -277,32 +275,202 @@ A análise espacial dos indicadores revela forte heterogeneidade territorial no 
 \label{fig:mapa_enem}
 \end{figure}
 
-\section{Análise Crítica e Limitações da Base Preparada}
+\section{Análise Crítica e Limitações da Parte 1}
 \label{sec:analise_critica}
 
 \subsection{Potencial Analítico da Base}
 
-A base construída integra indicadores de vulnerabilidade social, desempenho educacional, economia e estrutura demográfica. Esse arranjo proporcionará na Parte 2 do trabalho um alto poder de explicação para:
-\begin{itemize}
-    \item Avaliar se a preferência por determinados candidatos/partidos nas Eleições de 2026 possui autocorrelação espacial com áreas de alta criminalidade ou baixo desempenho educacional.
-    \item Executar análises de \textbf{I de Moran Bivariado} cruzando votação eleitoral com a taxa de homicídios e o IDEB.
-    \item Identificar *clusters* espaciais de alto-alto e baixo-baixo (mapas LISA) para orientação de políticas públicas regionais.
-\end{itemize}
+A base construída integra indicadores de vulnerabilidade social, desempenho educacional, economia e estrutura demográfica. Esse arranjo proporcionou o alicerce necessário para a execução das rotinas de econometria espacial e análise eleitoral na Parte 2 do trabalho.
 
 \subsection{Limitações Identificadas}
 
-As principais limitações metodológicas identificadas no processo incluem:
+As principais limitações metodológicas identificadas incluem:
 \begin{enumerate}
-    \item \textbf{Janelas Temporais Distintas:} Os dados do Censo referem-se a 2022, os dados do IPS a 2026 e os microdados do IDEB a 2023/2025. Embora representem a melhor informação disponível em nível municipal, pequenas defasagens devem ser ponderadas.
-    \item \textbf{Ausência de Dados em Exceções Espaciais:} Conforme pontuado nas especificações da disciplina, o município de Boa Esperança do Norte (MT) não possui dados censitários de 2022.
-    \item \textbf{Agregação Municipal:} Dados agregados por município podem ocultar disparidades intraurbanas acentuadas que ocorrem em grandes metrópoles (como São Paulo e Rio de Janeiro).
+    \item \textbf{Janelas Temporais Distintas:} Censo (2022), IDEB (2023/2025), IPS (2026) e Eleições (2026).
+    \item \textbf{Ausência de Dados em Exceções Espaciais:} Boa Esperança do Norte (MT) e polígonos hídricos (RS).
+    \item \textbf{Agregação Municipal:} Dados municipais agregados podem ocultar disparidades intraurbanas em metrópoles.
 \end{enumerate}
 
-\section{Conclusão e Próximos Passos}
-\label{sec:conclusao}
+\section{Conclusão da Parte 1}
+\label{sec:conclusao_p1}
 
-A Parte 1 do trabalho cumpriu com êxito todas as etapas de Engenharia de Dados e Análise Exploratória. O pipeline em Python garantiu $100\%$ de pareamento dos municípios, a tabela foi adequadamente estruturada e disponibilizada no servidor PostgreSQL/PostGIS da UFMG e o relatório em LaTeX sintetiza as propriedades estatísticas e territoriais da base.
+A Parte 1 do trabalho cumpriu com êxito todas as etapas de Engenharia de Dados e Análise Exploratória, garantindo 100\% de pareamento dos municípios e disponibilizando a tabela estruturada no PostGIS.
 
-Para a \textbf{Parte 2}, o grupo aguardará a publicação oficial dos dados eleitorais pelo TSE após o primeiro turno das Eleições de 2026 para executar as rotinas de agregação espacial nos níveis de Região Imediata, Intermediária e Estado, bem como os testes formais de autocorrelação e correlação espacial.
+\newpage
+
+% ==============================================================================
+% PARTE 2: ANÁLISE ESPACIAL DOS DADOS ELEITORAIS DE 2026
+% ==============================================================================
+
+\section{Análise Espacial dos Dados Eleitorais de 2026 (Parte 2)}
+\label{sec:parte2}
+
+\subsection{Metodologia, Matriz de Vizinhança e Correção FDR}
+
+A Parte 2 do trabalho processou os dados do 1º turno das Eleições de 2026 para $13$ candidatos à Presidência no Brasil e $720$ candidatos a Deputado Federal em Minas Gerais (após exclusão de 37 candidatos sem votos).
+
+As análises utilizaram:
+\begin{itemize}
+    \item \textbf{Matriz de Contiguidade Espacial:} Critério Queen (\texttt{ST\_Touches}) baseado nos limites geográficos originais do IBGE.
+    \item \textbf{Testes de Inferência Espacial:} Cálculo do I de Moran Global e Bivariado com $999$ permutações pseudo-aleatórias (semente 2026) e p-valor bilateral.
+    \item \textbf{Ajuste para Múltiplos Testes:} Correção de Benjamini--Hochberg (*False Discovery Rate* -- FDR) produzindo a métrica $q\_fdr\_bh$. Resultados com $q < 0,05$ foram considerados estatisticamente significantes.
+\end{itemize}
+
+\subsection{Autocorrelação Espacial dos Candidatos (Item 6a do Enunciado)}
+
+Testou-se a hipótese de que municípios vizinhos apresentam votações parecidas (organização espacial do voto).
+\begin{itemize}
+    \item \textbf{Presidente no Brasil:} Houve evidência estatística de dependência espacial para \textbf{13 dos 13 candidatos presidenciais (100\%)}.
+    \item \textbf{Deputado Federal em MG:} Registrou-se dependência espacial para \textbf{568 dos 720 candidatos (78,9\%)}. Destes, $567$ apresentaram autocorrelação positiva e apenas $1$ apresentou autocorrelação negativa.
+    \item \textbf{Eleitos vs. Não-Eleitos em MG:} Houve evidência de autocorrelação espacial para \textbf{todos os 53 deputados eleitos (100\%)} e para $515$ dos $667$ não-eleitos/suplentes.
+\end{itemize}
+
+\subsection{Mudança de Escala Territorial e Efeito MAUP (Item 6b do Enunciado)}
+
+Para avaliar o Efeito do Agrupamento de Unidades Modificáveis (*Modifiable Areal Unit Problem* -- MAUP), os votos foram agregados nos $4$ níveis territoriais. A Tabela~\ref{tab:comparacao_escalas} sintetiza a presença de autocorrelação espacial em cada escala.
+
+\begin{table}[H]
+\centering
+\caption{Quantidade de candidatos com evidência estatística de autocorrelação espacial ($q < 0,05$) por nível territorial.}
+\label{tab:comparacao_escalas}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Escopo} & \textbf{Municípios} & \textbf{Regiões Imediatas} & \textbf{Regiões Intermediárias} & \textbf{Estados} \\ \midrule
+Presidente no Brasil & 13 de 13 & 13 de 13 & 12 de 13 & -- \\
+Deputado Federal em MG & 568 de 720 & 258 de 720 & 0 de 720 & N/A* \\ \bottomrule
+\multicolumn{5}{l}{\small *Em MG existe apenas 1 UF, impossibilitando o teste espacial de vizinhança no nível estadual.}
+\end{tabular}
+\end{table}
+
+As Figuras~\ref{fig:panorama_moran_br} e \ref{fig:panorama_moran_mg} apresentam a distribuição dos valores do I de Moran nos diferentes níveis territoriais para Brasil e Minas Gerais.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{panorama_moran_presidente_BR.png}
+\caption{Distribuição do Índice de Moran Global nos 4 níveis territoriais para a Eleição Presidencial no Brasil.}
+\label{fig:panorama_moran_br}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{panorama_moran_deputado_federal_MG.png}
+\caption{Distribuição do Índice de Moran Global nos 4 níveis territoriais para Deputado Federal em Minas Gerais.}
+\label{fig:panorama_moran_mg}
+\end{figure}
+
+\subsection{Associação com Indicadores da Parte 1 e Censo 2022 (Item 6c do Enunciado)}
+
+Cruzou-se a votação municipal dos $733$ candidatos com os indicadores de Segurança Pública, Educação e Censo Demográfico. A Tabela~\ref{tab:correlacoes_resumo} exibe a contagem de candidatos com associação estatisticamente significante.
+
+\begin{table}[H]
+\centering
+\caption{Quantidade de candidatos com associação estatisticamente significante ($q < 0,05$) por indicador e teste.}
+\label{tab:correlacoes_resumo}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Indicador} & \textbf{Pearson (Linear)} & \textbf{Spearman (Monotônica)} & \textbf{Moran Bivariado (Espacial)} \\ \midrule
+Taxa de Homicídios & 54 & 527 & 147 \\
+Nota Mediana do ENEM & 131 & 650 & 203 \\
+IDEB -- Anos Iniciais & 35 & 69 & 98 \\
+IDEB -- Anos Finais & 31 & 69 & 93 \\
+IDEB -- Ensino Médio & 32 & 126 & 112 \\
+PIB per capita & 83 & 587 & 186 \\
+Rendimento Médio (Censo) & -- & -- & 328 \\
+Densidade Demográfica & -- & -- & 124 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+As Figuras~\ref{fig:indicadores_br} e \ref{fig:indicadores_mg} ilustram a distribuição espacial comparativa dos indicadores de Segurança e Educação.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{indicadores_presidente_BR.png}
+\caption{Espacialização comparativa entre Segurança Pública (Homicídios) e Desempenho Educacional (ENEM) no Brasil.}
+\label{fig:indicadores_br}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{indicadores_deputado_federal_MG.png}
+\caption{Espacialização comparativa de Segurança Pública e Educação nos municípios de Minas Gerais.}
+\label{fig:indicadores_mg}
+\end{figure}
+
+\subsection{Autocorrelação Espacial por Partido (Item 6d do Enunciado)}
+
+Somaram-se os votos nominais e de legenda por partido político em cada município. Registrou-se autocorrelação espacial positiva com evidência estatística em \textbf{13 dos 13 partidos presidenciais (100\%)} e em \textbf{25 dos 26 partidos com candidaturas em MG (96,1\%)}.
+
+\subsection{Análise Extra 1: Votação por Perfis Municipais (Item 6e do Enunciado)}
+
+Dividiram-se os municípios em $4$ perfis socioeducacionais combinando Homicídios e ENEM em relação à mediana nacional/estadual:
+\begin{enumerate}
+    \item \textbf{Perfil 1:} Baixa Violência e Alto ENEM (Cenário Ideal).
+    \item \textbf{Perfil 2:} Alta Violência e Alto ENEM.
+    \item \textbf{Perfil 3:} Baixa Violência e Baixo ENEM.
+    \item \textbf{Perfil 4:} Alta Violência e Baixo ENEM (Cenário Crítico).
+\end{enumerate}
+
+As Figuras~\ref{fig:perfis_br} e \ref{fig:perfis_mg} mapeiam os perfis municipais no Brasil e em Minas Gerais.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{perfis_presidente_BR.png}
+\caption{Mapeamento dos 4 perfis socioeducacionais nos municípios brasileiros.}
+\label{fig:perfis_br}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{perfis_deputado_federal_MG.png}
+\caption{Mapeamento dos 4 perfis socioeducacionais nos municípios de Minas Gerais.}
+\label{fig:perfis_mg}
+\end{figure}
+
+\subsection{Análise Extra 2: Nota do ENEM x Orientação Ideológica do Partido Líder}
+
+Investigou-se se a Nota Mediana do ENEM difere segundo a orientação ideológica (Esquerda vs. Direita) do partido mais votado no município, com base no estudo especialista de Bolognesi et al. (2025).
+
+A Tabela~\ref{tab:enem_ideologia} e as Figuras~\ref{fig:enem_ideologia_br} e \ref{fig:enem_ideologia_mg} apresentam os resultados descritivos das medianas das notas.
+
+\begin{table}[H]
+\centering
+\caption{Comparação das notas medianas do ENEM entre municípios liderados por partidos de Esquerda e Direita.}
+\label{tab:enem_ideologia}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Escopo} & \textbf{Municípios Esquerda} & \textbf{Municípios Direita} & \textbf{Mediana Esquerda} & \textbf{Mediana Direita} \\ \midrule
+Presidente no Brasil & 2.663 & 2.905 & 494,78 & 523,94 (+29,16) \\
+Deputado Federal em MG & 100 & 735 & 511,13 & 525,62 (+14,49) \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{enem_ideologia_presidente_BR.png}
+\caption{Distribuição dos partidos líderes por orientação ideológica e boxplot da Nota do ENEM no Brasil.}
+\label{fig:enem_ideologia_br}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{enem_ideologia_deputado_federal_MG.png}
+\caption{Distribuição dos partidos líderes por orientação ideológica e boxplot da Nota do ENEM em Minas Gerais.}
+\label{fig:enem_ideologia_mg}
+\end{figure}
+
+\section{Análise Crítica, Limitações e Falácia Ecológica}
+\label{sec:limitacoes_p2}
+
+Ressaltam-se os seguintes cuidados na interpretação dos achados:
+\begin{enumerate}
+    \item \textbf{Falácia Ecológica:} Associações em nível municipal não implicam causalidade nem permitem inferir o comportamento individual de voto do eleitor.
+    \item \textbf{Agregação Espacial e MAUP:} A redução do número de unidades espaciais em níveis agregados (RGI/RGINT) reduz o poder estatístico dos testes de contiguidade.
+    \item \textbf{Classificação Ideológica:} A classificação partidária utilizada reflete uma avaliação histórica de especialistas (2022) aplicada de forma exploratória aos dados de 2026.
+\end{enumerate}
+
+\section{Conclusão Geral}
+\label{sec:conclusao_geral}
+
+O trabalho prático alcançou integralmente seus objetivos de Engenharia de Dados, Análise Exploratória e Econometria Espacial. Demonstrou-se a presença de forte organização territorial no voto brasileiro, influenciada pela escala geográfica e correlacionada a fatores estruturais de segurança pública e desempenho educacional.
 
 \end{document}
